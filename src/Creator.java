@@ -224,7 +224,39 @@ public class Creator {
         }
     }
 
-    private void addSymbols() {}
+    private void addSymbols() {
+        // Numbers to ArrayList
+        ArrayList<Integer> nums = new ArrayList<>();
+        for (int i=0; i<passwordAL.size(); i++) {
+            try {
+                nums.add(Integer.parseInt(passwordAL.get(i)));
+            } catch (NumberFormatException e) {
+
+            }
+        }
+
+        String first = "";
+        String last = "";
+
+        Set es = symbolValues.entrySet();
+        Iterator iter = es.iterator();
+
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry)iter.next();
+            int val = Integer.valueOf(entry.getValue().toString());
+            String key = entry.getKey().toString();
+
+            if (nums.get(0) == val) {
+                first = key;
+            }
+            if (nums.get(nums.size()-1) == val) {
+                last = key;
+            }
+        }
+
+        passwordAL.add(0, first);
+        passwordAL.add(last);
+    }
 
 
 
