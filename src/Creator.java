@@ -46,8 +46,9 @@ public class Creator {
         numberShift();
 
         incrementLetters();
-
         addSymbols();
+
+        padToLength();
 
         stringifyPassword();
 
@@ -68,6 +69,7 @@ public class Creator {
     }
 
     private void initValues() {
+        passwordAL.trimToSize();
         // Seed to array
         for (int i=0; i<seed.length(); i++) {
             passwordAL.add(Character.toString(seed.charAt(i)));
@@ -93,6 +95,7 @@ public class Creator {
     }
 
     private void vowelShift() {
+        passwordAL.trimToSize();
 
         ArrayList<String> tempVowels = new ArrayList<>();
         int numVowels = 0;
@@ -127,6 +130,7 @@ public class Creator {
     }
 
     private void consonentOrder() {
+        passwordAL.trimToSize();
         // Find start of consonents
         int j = 0;
         while (vowelValues.containsKey(passwordAL.get(j))) {
@@ -158,6 +162,7 @@ public class Creator {
     }
 
     private void vowelsToNumbers() {
+        passwordAL.trimToSize();
         for (int i=0; i<passwordAL.size(); i++) {
             if (vowelValues.containsKey(passwordAL.get(i))) {
                 passwordAL.set(i, Integer.toString(vowelValues.get(passwordAL.get(i))));
@@ -166,6 +171,7 @@ public class Creator {
     }
 
     private void numberShift() {
+        passwordAL.trimToSize();
         // Numbers into ArrayList
         ArrayList<Integer> nums = new ArrayList<>();
         for (int i=0; i<passwordAL.size(); i++) {
@@ -193,6 +199,7 @@ public class Creator {
     }
 
     private void incrementLetters() {
+        passwordAL.trimToSize();
         // Numbers to ArrayList
         ArrayList<Integer> nums = new ArrayList<>();
         for (int i=0; i<passwordAL.size(); i++) {
@@ -225,6 +232,7 @@ public class Creator {
     }
 
     private void addSymbols() {
+        passwordAL.trimToSize();
         // Numbers to ArrayList
         ArrayList<Integer> nums = new ArrayList<>();
         for (int i=0; i<passwordAL.size(); i++) {
@@ -256,6 +264,41 @@ public class Creator {
 
         passwordAL.add(0, first);
         passwordAL.add(last);
+    }
+
+    private void padToLength() {
+        passwordAL.trimToSize();
+        if (passwordAL.size() < 16) {
+            // Numbers to ArrayList
+            ArrayList<Integer> nums = new ArrayList<>();
+            for (int i=0; i<passwordAL.size(); i++) {
+                try {
+                    nums.add(Integer.parseInt(passwordAL.get(i)));
+                } catch (NumberFormatException e) {
+
+                }
+            }
+
+            int padding = nums.size();
+            int numToAdd = 16 - passwordAL.size();
+
+            Set es = alphabetValues.entrySet();
+
+            for (int i=0; i<numToAdd; i++) {
+                Iterator iter = es.iterator();
+
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry)iter.next();
+                    int val = Integer.valueOf(entry.getValue().toString());
+                    String key = entry.getKey().toString();
+
+                    if (val == padding+i) {
+                        passwordAL.add(padding+1, key);
+                    }
+                }
+            }
+
+        }
     }
 
 
