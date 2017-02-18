@@ -1,6 +1,9 @@
+import sun.text.IntHashtable;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.IntStream;
 
 /**
  * Created by kai-w on 17/02/17.
@@ -9,11 +12,11 @@ public class Creator {
     String seed;
     int offset;
 
-    ArrayList<String> passwordAL = new ArrayList<>();
-    String password;
+    private ArrayList<String> passwordAL = new ArrayList<>();
+    private String password;
 
-    boolean seedError = false;
-    boolean offsetError = false;
+    private boolean seedError = false;
+    private boolean offsetError = false;
 
     private String[] vowels = new String[]{"A","E","I","O","U"};
     private HashMap<String, Integer> vowelValues = new HashMap<>();
@@ -42,6 +45,10 @@ public class Creator {
         initValues();
 
         vowelShift();
+        consonentOrder();
+
+        vowelsToNumbers();
+        numberShift();
 
         stringifyPassword();
 
@@ -120,9 +127,75 @@ public class Creator {
         }
     }
 
+    private void consonentOrder() {
+        // Find start of consonents
+        int j = 0;
+        while (vowelValues.containsKey(passwordAL.get(j))) {
+            j++;
+        }
+
+        // Move consonents to seperate ArrayList
+        ArrayList<String> tempCons = new ArrayList<>();
+        int tempSize = passwordAL.size();
+        for (int i=j; i<tempSize; i++) {
+            if (!vowelValues.containsKey(passwordAL.get(j))) {
+                tempCons.add(passwordAL.get(j));
+                passwordAL.remove(j);
+            }
+        }
+
+        // ArrayList to char[] and sort
+        char[] tempTempCons = new char[tempCons.size()];
+        for (int i=0; i<tempCons.size(); i++) {
+            tempTempCons[i] = tempCons.get(i).charAt(0);
+        }
+        Arrays.sort(tempTempCons);
+
+        // Added sorted consonents back into password
+        for (int i=0; i<tempTempCons.length; i++) {
+            passwordAL.add(Character.toString(tempTempCons[i]));
+        }
+
+    }
+
+    private void vowelsToNumbers() {
+        for (int i=0; i<passwordAL.size(); i++) {
+            if (vowelValues.containsKey(passwordAL.get(i))) {
+                passwordAL.set(i, Integer.toString(vowelValues.get(passwordAL.get(i))));
+            }
+        }
+    }
+
+    private void numberShift() {
+        // Numbers into ArrayList
+        ArrayList<Integer> nums = new ArrayList<>();
+        for (int i=0; i<passwordAL.size(); i++) {
+            try {
+                nums.add(Integer.parseInt(passwordAL.get(i)));
+            } catch (NumberFormatException e) {
+
+            }
+        }
+
+        // Increment numbers
+        int first = nums.get(0);
+        for (int i=0; i<nums.size(); i++) {
+            if (i == nums.size()-1) {
+                nums.set(i, nums.get(i)+first);
+            } else {
+                nums.set(i, nums.get(i)+nums.get(i+1));
+            }
+        }
+
+        // Add numbers back into password ArrayList
+        for (int i=0; i<nums.size(); i++) {
+            passwordAL.set(i, Integer.toString(nums.get(i)));
+        }
+    }
+
 
 
     private void stringifyPassword() {
-        password = String.join("", passwordAL);
+        password = String.join("", passwordAL).replaceAll("\\s+","");
     }
 }
