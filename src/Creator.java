@@ -1,9 +1,4 @@
-import sun.text.IntHashtable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.stream.IntStream;
+import java.util.*;
 
 /**
  * Created by kai-w on 17/02/17.
@@ -49,6 +44,10 @@ public class Creator {
 
         vowelsToNumbers();
         numberShift();
+
+        incrementLetters();
+
+        addSymbols();
 
         stringifyPassword();
 
@@ -192,6 +191,40 @@ public class Creator {
             passwordAL.set(i, Integer.toString(nums.get(i)));
         }
     }
+
+    private void incrementLetters() {
+        // Numbers to ArrayList
+        ArrayList<Integer> nums = new ArrayList<>();
+        for (int i=0; i<passwordAL.size(); i++) {
+            try {
+                nums.add(Integer.parseInt(passwordAL.get(i)));
+            } catch (NumberFormatException e) {
+
+            }
+        }
+
+        Set es = alphabetValues.entrySet();
+
+        for (int i=nums.size(); i<passwordAL.size(); i++) {
+            int numIndex = (i  - nums.size()) % nums.size();
+            int letterVal = alphabetValues.get(passwordAL.get(i));
+
+            int newLetterVal = (letterVal + nums.get(numIndex)) % alphabetValues.size();
+
+            Iterator iter = es.iterator();
+            while (iter.hasNext()) {
+                Map.Entry entry = (Map.Entry)iter.next();
+                int val = Integer.valueOf(entry.getValue().toString());
+                String key = entry.getKey().toString();
+
+                if (newLetterVal == val) {
+                    passwordAL.set(i, key);
+                }
+            }
+        }
+    }
+
+    private void addSymbols() {}
 
 
 
